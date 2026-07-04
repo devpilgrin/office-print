@@ -1,4 +1,4 @@
-﻿#![cfg(not(target_arch = "wasm32"))] // native-only unit tests (filesystem, system fonts)
+#![cfg(not(target_arch = "wasm32"))] // native-only unit tests (filesystem, system fonts)
 use super::test_support::{
     build_docx_with_title, build_test_docx, make_simple_document, make_test_docx_bytes,
 };
@@ -252,8 +252,7 @@ fn test_metrics_output_size_matches_pdf() {
     let pdf_len = result.as_pdf_bytes().unwrap().len() as u64;
     let metrics = result.metrics.expect("should have metrics");
     assert_eq!(
-        metrics.output_size_bytes,
-        pdf_len,
+        metrics.output_size_bytes, pdf_len,
         "output_size_bytes should match actual PDF size"
     );
 }

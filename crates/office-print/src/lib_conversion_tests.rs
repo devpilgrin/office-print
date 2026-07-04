@@ -1,4 +1,4 @@
-﻿#![cfg(not(target_arch = "wasm32"))] // native-only unit tests (filesystem, system fonts)
+#![cfg(not(target_arch = "wasm32"))] // native-only unit tests (filesystem, system fonts)
 use super::test_support::{build_test_docx, build_test_pptx, build_test_xlsx};
 use super::*;
 
@@ -284,7 +284,6 @@ fn test_docx_toc_pipeline_produces_pdf() {
 // --- Raster (PNG/JPEG) output tests ---
 
 use crate::config::OutputFormat;
-use crate::error::OutputData;
 
 #[test]
 fn test_docx_to_png_produces_valid_png() {
@@ -294,9 +293,15 @@ fn test_docx_to_png_produces_valid_png() {
         ..Default::default()
     };
     let result = convert_bytes(&docx, Format::Docx, &options).unwrap();
-    let pages = result.output.as_raster_pages().expect("should be raster output");
+    let pages = result
+        .output
+        .as_raster_pages()
+        .expect("should be raster output");
     assert_eq!(pages.len(), 1, "single page DOCX → 1 PNG page");
-    assert!(pages[0].starts_with(b"\x89PNG\r\n\x1a\n"), "valid PNG magic bytes");
+    assert!(
+        pages[0].starts_with(b"\x89PNG\r\n\x1a\n"),
+        "valid PNG magic bytes"
+    );
 }
 
 #[test]
@@ -308,9 +313,15 @@ fn test_docx_to_jpeg_produces_valid_jpeg() {
         ..Default::default()
     };
     let result = convert_bytes(&docx, Format::Docx, &options).unwrap();
-    let pages = result.output.as_raster_pages().expect("should be raster output");
+    let pages = result
+        .output
+        .as_raster_pages()
+        .expect("should be raster output");
     assert_eq!(pages.len(), 1);
-    assert!(pages[0].starts_with(&[0xFF, 0xD8, 0xFF]), "valid JPEG magic bytes");
+    assert!(
+        pages[0].starts_with(&[0xFF, 0xD8, 0xFF]),
+        "valid JPEG magic bytes"
+    );
 }
 
 #[test]
@@ -321,7 +332,10 @@ fn test_xlsx_to_png_produces_valid_png() {
         ..Default::default()
     };
     let result = convert_bytes(&xlsx, Format::Xlsx, &options).unwrap();
-    let pages = result.output.as_raster_pages().expect("should be raster output");
+    let pages = result
+        .output
+        .as_raster_pages()
+        .expect("should be raster output");
     assert!(!pages.is_empty(), "should have at least 1 page");
     assert!(pages[0].starts_with(b"\x89PNG\r\n\x1a\n"));
 }
@@ -335,7 +349,10 @@ fn test_pptx_to_jpeg_default_quality() {
     };
     let result = convert_bytes(&pptx, Format::Pptx, &options).unwrap();
     // JPEG quality defaults to 92 in ConvertOptions
-    let pages = result.output.as_raster_pages().expect("should be raster output");
+    let pages = result
+        .output
+        .as_raster_pages()
+        .expect("should be raster output");
     assert!(!pages.is_empty());
     assert!(pages[0].starts_with(&[0xFF, 0xD8, 0xFF]));
 }
@@ -396,8 +413,5 @@ fn test_output_data_as_pdf_bytes_returns_some_for_pdf() {
 fn test_convert_result_as_pdf_bytes_shorthand() {
     let docx = build_test_docx();
     let result = convert_bytes(&docx, Format::Docx, &ConvertOptions::default()).unwrap();
-    assert_eq!(
-        result.as_pdf_bytes(),
-        result.output.as_pdf_bytes()
-    );
+    assert_eq!(result.as_pdf_bytes(), result.output.as_pdf_bytes());
 }

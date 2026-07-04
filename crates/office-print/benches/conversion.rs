@@ -1,4 +1,4 @@
-﻿use std::io::Cursor;
+use std::io::Cursor;
 
 use criterion::{Criterion, criterion_group, criterion_main};
 use office_print::config::{ConvertOptions, Format, OutputFormat};
@@ -206,7 +206,8 @@ fn bench_docx_conversion(c: &mut Criterion) {
 
     group.bench_function("100_pages", |b| {
         b.iter(|| {
-            office_print::convert_bytes(&data_100, Format::Docx, &ConvertOptions::default()).unwrap()
+            office_print::convert_bytes(&data_100, Format::Docx, &ConvertOptions::default())
+                .unwrap()
         })
     });
 
@@ -228,7 +229,8 @@ fn bench_pptx_conversion(c: &mut Criterion) {
 
     group.bench_function("100_slides", |b| {
         b.iter(|| {
-            office_print::convert_bytes(&data_100, Format::Pptx, &ConvertOptions::default()).unwrap()
+            office_print::convert_bytes(&data_100, Format::Pptx, &ConvertOptions::default())
+                .unwrap()
         })
     });
 
@@ -277,12 +279,7 @@ fn bench_docx_raster_formats(c: &mut Criterion) {
 
     group.bench_function("pdf", |b| {
         b.iter(|| {
-            office_print::convert_bytes(
-                &data,
-                Format::Docx,
-                &ConvertOptions::default(),
-            )
-            .unwrap()
+            office_print::convert_bytes(&data, Format::Docx, &ConvertOptions::default()).unwrap()
         })
     });
 
@@ -341,12 +338,7 @@ fn bench_xlsx_raster_formats(c: &mut Criterion) {
 
     group.bench_function("pdf", |b| {
         b.iter(|| {
-            office_print::convert_bytes(
-                &data,
-                Format::Xlsx,
-                &ConvertOptions::default(),
-            )
-            .unwrap()
+            office_print::convert_bytes(&data, Format::Xlsx, &ConvertOptions::default()).unwrap()
         })
     });
 

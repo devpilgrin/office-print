@@ -1,4 +1,4 @@
-﻿#![cfg(not(target_arch = "wasm32"))] // native-only integration tests (fs, qpdf, criterion)
+#![cfg(not(target_arch = "wasm32"))] // native-only integration tests (fs, qpdf, criterion)
 //! Integration tests for XLSX fixtures.
 //!
 //! Each real-world `.xlsx` file in `tests/fixtures/xlsx/` gets two tests:
@@ -33,12 +33,15 @@ fn assert_produces_valid_pdf(name: &str) {
     let path = fixture_path(name);
     match office_print::convert(&path) {
         Ok(result) => {
-            assert!(!result.as_pdf_bytes().unwrap().is_empty(), "PDF output should not be empty");
+            assert!(
+                !result.as_pdf_bytes().unwrap().is_empty(),
+                "PDF output should not be empty"
+            );
             assert!(
                 result.as_pdf_bytes().unwrap().starts_with(b"%PDF"),
                 "output should start with PDF magic bytes"
             );
-            common::validate_pdf_with_qpdf(&result.as_pdf_bytes().unwrap());
+            common::validate_pdf_with_qpdf(result.as_pdf_bytes().unwrap());
         }
         Err(e) => {
             eprintln!("[WARN] {name}: conversion error (non-panic): {e}");
@@ -249,7 +252,7 @@ fn structure_temperature() {
 fn pdf_text(name: &str) -> String {
     let path = fixture_path(name);
     let result = office_print::convert(&path).expect("conversion should succeed");
-    common::extract_pdf_text(&result.as_pdf_bytes().unwrap())
+    common::extract_pdf_text(result.as_pdf_bytes().unwrap())
 }
 
 // ---------------------------------------------------------------------------
@@ -506,7 +509,10 @@ fn encrypted_xlsx_returns_unsupported_encryption() {
     }
     let err = office_print::convert(&path).unwrap_err();
     assert!(
-        matches!(err, office_print::error::ConvertError::UnsupportedEncryption),
+        matches!(
+            err,
+            office_print::error::ConvertError::UnsupportedEncryption
+        ),
         "Expected UnsupportedEncryption for protected_passtika.xlsx, got: {err:?}"
     );
 }

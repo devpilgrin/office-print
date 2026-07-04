@@ -1,4 +1,4 @@
-﻿//! WebAssembly bindings for office-print via `wasm-bindgen`.
+//! WebAssembly bindings for office-print via `wasm-bindgen`.
 //!
 //! This module is only available when the `wasm` feature is enabled.
 //! It exports JavaScript-callable functions for converting Office documents
@@ -24,8 +24,8 @@ fn convert_inner(
     output_format: OutputFormat,
     jpeg_quality: u8,
 ) -> Result<Vec<u8>, String> {
-    let fmt = Format::from_extension(format)
-        .ok_or_else(|| format!("unsupported format: {format}"))?;
+    let fmt =
+        Format::from_extension(format).ok_or_else(|| format!("unsupported format: {format}"))?;
     let options = ConvertOptions {
         output_format,
         jpeg_quality,
@@ -56,12 +56,10 @@ fn convert_format_inner(
 fn flatten_output(output: OutputData) -> Result<Vec<u8>, String> {
     match output {
         OutputData::Pdf(pdf) => Ok(pdf),
-        OutputData::Raster { pages, .. } => {
-            pages
-                .into_iter()
-                .next()
-                .ok_or_else(|| "raster output has no pages".to_string())
-        }
+        OutputData::Raster { pages, .. } => pages
+            .into_iter()
+            .next()
+            .ok_or_else(|| "raster output has no pages".to_string()),
     }
 }
 

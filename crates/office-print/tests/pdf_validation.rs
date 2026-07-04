@@ -55,7 +55,7 @@ fn validate_docx_table_pdf() {
         result.as_pdf_bytes().unwrap().starts_with(b"%PDF"),
         "output should be a valid PDF"
     );
-    common::validate_pdf_with_qpdf(&result.as_pdf_bytes().unwrap());
+    common::validate_pdf_with_qpdf(result.as_pdf_bytes().unwrap());
 }
 
 #[test]
@@ -66,7 +66,7 @@ fn validate_docx_styles_pdf() {
         result.as_pdf_bytes().unwrap().starts_with(b"%PDF"),
         "output should be a valid PDF"
     );
-    common::validate_pdf_with_qpdf(&result.as_pdf_bytes().unwrap());
+    common::validate_pdf_with_qpdf(result.as_pdf_bytes().unwrap());
 }
 
 // ---------------------------------------------------------------------------
@@ -81,7 +81,7 @@ fn validate_pptx_sample_pdf() {
         result.as_pdf_bytes().unwrap().starts_with(b"%PDF"),
         "output should be a valid PDF"
     );
-    common::validate_pdf_with_qpdf(&result.as_pdf_bytes().unwrap());
+    common::validate_pdf_with_qpdf(result.as_pdf_bytes().unwrap());
 }
 
 #[test]
@@ -92,7 +92,7 @@ fn validate_pptx_test_slides_pdf() {
         result.as_pdf_bytes().unwrap().starts_with(b"%PDF"),
         "output should be a valid PDF"
     );
-    common::validate_pdf_with_qpdf(&result.as_pdf_bytes().unwrap());
+    common::validate_pdf_with_qpdf(result.as_pdf_bytes().unwrap());
 }
 
 // ---------------------------------------------------------------------------
@@ -107,7 +107,7 @@ fn validate_xlsx_temperature_pdf() {
         result.as_pdf_bytes().unwrap().starts_with(b"%PDF"),
         "output should be a valid PDF"
     );
-    common::validate_pdf_with_qpdf(&result.as_pdf_bytes().unwrap());
+    common::validate_pdf_with_qpdf(result.as_pdf_bytes().unwrap());
 }
 
 #[test]
@@ -118,5 +118,5 @@ fn validate_xlsx_formatted_pdf() {
         result.as_pdf_bytes().unwrap().starts_with(b"%PDF"),
         "output should be a valid PDF"
     );
-    common::validate_pdf_with_qpdf(&result.as_pdf_bytes().unwrap());
+    common::validate_pdf_with_qpdf(result.as_pdf_bytes().unwrap());
 }

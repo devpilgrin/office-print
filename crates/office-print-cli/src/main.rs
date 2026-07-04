@@ -1,4 +1,4 @@
-﻿use std::collections::HashSet;
+use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use std::process;
 
@@ -152,7 +152,12 @@ fn format_extension(format: OutputFormat) -> &'static str {
 }
 
 /// Determine the output path for a given input file.
-fn determine_output_path(input: &Path, output: Option<&Path>, outdir: Option<&Path>, format: OutputFormat) -> PathBuf {
+fn determine_output_path(
+    input: &Path,
+    output: Option<&Path>,
+    outdir: Option<&Path>,
+    format: OutputFormat,
+) -> PathBuf {
     if let Some(out) = output {
         out.to_path_buf()
     } else if let Some(dir) = outdir {

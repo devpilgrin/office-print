@@ -1,4 +1,4 @@
-﻿use super::*;
+use super::*;
 
 #[test]
 fn test_unsupported_element_display() {
@@ -69,7 +69,9 @@ fn test_warning_clone_and_eq() {
 
 #[test]
 fn test_convert_result_fields() {
-    let result = ConvertResult { output: OutputData::Pdf(vec![0x25, 0x50, 0x44, 0x46]), warnings: vec![ConvertWarning::UnsupportedElement {
+    let result = ConvertResult {
+        output: OutputData::Pdf(vec![0x25, 0x50, 0x44, 0x46]),
+        warnings: vec![ConvertWarning::UnsupportedElement {
             format: "DOCX".to_string(),
             element: "Image".to_string(),
         }],
@@ -82,7 +84,9 @@ fn test_convert_result_fields() {
 
 #[test]
 fn test_convert_result_empty_warnings() {
-    let result = ConvertResult { output: OutputData::Pdf(vec![1, 2, 3]), warnings: vec![],
+    let result = ConvertResult {
+        output: OutputData::Pdf(vec![1, 2, 3]),
+        warnings: vec![],
         metrics: None,
     };
     assert!(result.warnings.is_empty());
@@ -129,7 +133,9 @@ fn test_convert_metrics_clone() {
 #[test]
 fn test_convert_result_with_metrics() {
     use std::time::Duration;
-    let result = ConvertResult { output: OutputData::Pdf(vec![0x25, 0x50, 0x44, 0x46]), warnings: vec![],
+    let result = ConvertResult {
+        output: OutputData::Pdf(vec![0x25, 0x50, 0x44, 0x46]),
+        warnings: vec![],
         metrics: Some(ConvertMetrics {
             parse_duration: Duration::from_millis(10),
             codegen_duration: Duration::from_millis(20),

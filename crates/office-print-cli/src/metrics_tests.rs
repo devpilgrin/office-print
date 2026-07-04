@@ -1,4 +1,4 @@
-﻿use super::*;
+use super::*;
 
 #[test]
 fn test_empty_metrics_render() {
@@ -18,7 +18,9 @@ fn test_record_success_increments_counter() {
     store.record_success("docx", 0.3, 512, 1024, 1);
 
     let output = store.render();
-    assert!(output.contains("office_print_conversions_total{format=\"docx\",status=\"success\"} 2"));
+    assert!(
+        output.contains("office_print_conversions_total{format=\"docx\",status=\"success\"} 2")
+    );
 }
 
 #[test]
@@ -27,7 +29,9 @@ fn test_record_failure_increments_counters() {
     store.record_failure("pptx", "conversion");
 
     let output = store.render();
-    assert!(output.contains("office_print_conversions_total{format=\"pptx\",status=\"failure\"} 1"));
+    assert!(
+        output.contains("office_print_conversions_total{format=\"pptx\",status=\"failure\"} 1")
+    );
     assert!(
         output.contains("office_print_errors_total{format=\"pptx\",error_type=\"conversion\"} 1")
     );
@@ -67,23 +71,17 @@ fn test_duration_histogram_buckets() {
 
     let output = store.render();
     // Should be in le=0.05 bucket
-    assert!(
-        output.contains(
-            "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"0.05\"} 1"
-        )
-    );
+    assert!(output.contains(
+        "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"0.05\"} 1"
+    ));
     // Should NOT be in le=0.01 bucket
-    assert!(
-        output.contains(
-            "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"0.01\"} 0"
-        )
-    );
+    assert!(output.contains(
+        "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"0.01\"} 0"
+    ));
     // Should be in +Inf bucket
-    assert!(
-        output.contains(
-            "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"+Inf\"} 1"
-        )
-    );
+    assert!(output.contains(
+        "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"+Inf\"} 1"
+    ));
     // Sum and count
     assert!(output.contains("office_print_conversion_duration_seconds_sum{format=\"docx\"} 0.05"));
     assert!(output.contains("office_print_conversion_duration_seconds_count{format=\"docx\"} 1"));
@@ -97,9 +95,15 @@ fn test_multiple_formats_tracked_separately() {
     store.record_failure("pptx", "conversion");
 
     let output = store.render();
-    assert!(output.contains("office_print_conversions_total{format=\"docx\",status=\"success\"} 1"));
-    assert!(output.contains("office_print_conversions_total{format=\"xlsx\",status=\"success\"} 1"));
-    assert!(output.contains("office_print_conversions_total{format=\"pptx\",status=\"failure\"} 1"));
+    assert!(
+        output.contains("office_print_conversions_total{format=\"docx\",status=\"success\"} 1")
+    );
+    assert!(
+        output.contains("office_print_conversions_total{format=\"xlsx\",status=\"success\"} 1")
+    );
+    assert!(
+        output.contains("office_print_conversions_total{format=\"pptx\",status=\"failure\"} 1")
+    );
 }
 
 #[test]
@@ -113,17 +117,13 @@ fn test_histogram_cumulative_counts() {
 
     let output = store.render();
     // le=0.01: 0.001 fits => 1
-    assert!(
-        output.contains(
-            "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"0.01\"} 1"
-        )
-    );
+    assert!(output.contains(
+        "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"0.01\"} 1"
+    ));
     // le=0.05: 0.001, 0.02 fit => 2
-    assert!(
-        output.contains(
-            "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"0.05\"} 2"
-        )
-    );
+    assert!(output.contains(
+        "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"0.05\"} 2"
+    ));
     // le=0.5: 0.001, 0.02, 0.5 fit => 3
     assert!(
         output.contains(
@@ -137,11 +137,9 @@ fn test_histogram_cumulative_counts() {
         )
     );
     // +Inf: all => 4
-    assert!(
-        output.contains(
-            "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"+Inf\"} 4"
-        )
-    );
+    assert!(output.contains(
+        "office_print_conversion_duration_seconds_bucket{format=\"docx\",le=\"+Inf\"} 4"
+    ));
 }
 
 #[test]
@@ -152,11 +150,13 @@ fn test_input_bytes_histogram() {
     let output = store.render();
     // 50_000 bytes is between 10_240 and 102_400
     assert!(
-        output.contains("office_print_conversion_input_bytes_bucket{format=\"xlsx\",le=\"10240\"} 0")
+        output
+            .contains("office_print_conversion_input_bytes_bucket{format=\"xlsx\",le=\"10240\"} 0")
     );
     assert!(
-        output
-            .contains("office_print_conversion_input_bytes_bucket{format=\"xlsx\",le=\"102400\"} 1")
+        output.contains(
+            "office_print_conversion_input_bytes_bucket{format=\"xlsx\",le=\"102400\"} 1"
+        )
     );
 }
 
@@ -221,8 +221,9 @@ fn test_error_types_tracked_separately() {
         output.contains("office_print_errors_total{format=\"docx\",error_type=\"conversion\"} 2")
     );
     assert!(
-        output
-            .contains("office_print_errors_total{format=\"docx\",error_type=\"invalid_request\"} 1")
+        output.contains(
+            "office_print_errors_total{format=\"docx\",error_type=\"invalid_request\"} 1"
+        )
     );
 }
 
@@ -238,11 +239,9 @@ fn test_output_bytes_histogram() {
             "office_print_conversion_output_bytes_bucket{format=\"pptx\",le=\"1048576\"} 0"
         )
     );
-    assert!(
-        output.contains(
-            "office_print_conversion_output_bytes_bucket{format=\"pptx\",le=\"10485760\"} 1"
-        )
-    );
+    assert!(output.contains(
+        "office_print_conversion_output_bytes_bucket{format=\"pptx\",le=\"10485760\"} 1"
+    ));
 }
 
 #[test]

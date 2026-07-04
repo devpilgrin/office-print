@@ -1,4 +1,4 @@
-﻿#![cfg(not(target_arch = "wasm32"))] // native-only integration tests (fs, qpdf, criterion)
+#![cfg(not(target_arch = "wasm32"))] // native-only integration tests (fs, qpdf, criterion)
 //! Performance validation tests with tiered targets.
 //!
 //! Three tiers based on document complexity:
@@ -705,15 +705,24 @@ fn tier_builders_produce_valid_documents() {
     // Small tier: all formats should convert without error
     let small_docx = build_small_docx();
     let r = office_print::convert_bytes(&small_docx, Format::Docx, &opts).unwrap();
-    assert!(!r.as_pdf_bytes().unwrap().is_empty(), "Small DOCX should produce non-empty PDF");
+    assert!(
+        !r.as_pdf_bytes().unwrap().is_empty(),
+        "Small DOCX should produce non-empty PDF"
+    );
 
     let small_pptx = build_small_pptx();
     let r = office_print::convert_bytes(&small_pptx, Format::Pptx, &opts).unwrap();
-    assert!(!r.as_pdf_bytes().unwrap().is_empty(), "Small PPTX should produce non-empty PDF");
+    assert!(
+        !r.as_pdf_bytes().unwrap().is_empty(),
+        "Small PPTX should produce non-empty PDF"
+    );
 
     let small_xlsx = build_small_xlsx();
     let r = office_print::convert_bytes(&small_xlsx, Format::Xlsx, &opts).unwrap();
-    assert!(!r.as_pdf_bytes().unwrap().is_empty(), "Small XLSX should produce non-empty PDF");
+    assert!(
+        !r.as_pdf_bytes().unwrap().is_empty(),
+        "Small XLSX should produce non-empty PDF"
+    );
 
     // Medium tier
     let medium_docx = build_medium_docx();

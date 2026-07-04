@@ -118,7 +118,10 @@ pub(super) fn convert_bytes(
     }
 
     #[cfg(feature = "pdf-ops")]
-    if options.streaming && format == Format::Xlsx && options.output_format == config::OutputFormat::Pdf {
+    if options.streaming
+        && format == Format::Xlsx
+        && options.output_format == config::OutputFormat::Pdf
+    {
         return convert_bytes_streaming_xlsx(data, options);
     }
 
@@ -198,17 +201,11 @@ pub(super) fn convert_bytes(
         .map(|context| context.search_paths())
         .unwrap_or(&[]);
     #[cfg(not(target_arch = "wasm32"))]
-    let document = render::pdf::compile_to_document(
-        &output.source,
-        &output.images,
-        font_search_paths,
-    )?;
+    let document =
+        render::pdf::compile_to_document(&output.source, &output.images, font_search_paths)?;
     #[cfg(target_arch = "wasm32")]
-    let document = render::pdf::compile_to_document(
-        &output.source,
-        &output.images,
-        &options.font_paths,
-    )?;
+    let document =
+        render::pdf::compile_to_document(&output.source, &output.images, &options.font_paths)?;
 
     let output_data = match options.output_format {
         config::OutputFormat::Pdf => {
@@ -436,7 +433,8 @@ pub(super) fn render_document(doc: &ir::Document) -> Result<Vec<u8>, ConvertErro
             .as_ref()
             .map(|context| context.search_paths())
             .unwrap_or(&[]);
-        let document = render::pdf::compile_to_document(&output.source, &output.images, font_paths)?;
+        let document =
+            render::pdf::compile_to_document(&output.source, &output.images, font_paths)?;
         render::pdf::export_pdf(&document, None, false, false)
     }
     #[cfg(target_arch = "wasm32")]

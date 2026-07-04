@@ -42,12 +42,7 @@ fn encode_png(rgba: &[u8], width: u32, height: u32) -> Result<Vec<u8>, ConvertEr
 }
 
 /// Encode RGBA pixel data as JPEG bytes with specified quality.
-fn encode_jpeg(
-    rgba: &[u8],
-    width: u32,
-    height: u32,
-    quality: u8,
-) -> Result<Vec<u8>, ConvertError> {
+fn encode_jpeg(rgba: &[u8], width: u32, height: u32, quality: u8) -> Result<Vec<u8>, ConvertError> {
     let rgb: Vec<u8> = rgba
         .chunks_exact(4)
         .flat_map(|c| [c[0], c[1], c[2]])

@@ -58,7 +58,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         } else {
                             // Multi-page raster: write page-1.png, page-2.png, ...
                             for (i, page) in pages.iter().enumerate() {
-                                let page_name = format!("{stem}-page-{n}.{ext}", stem = stem, n = i + 1, ext = ext);
+                                let page_name = format!(
+                                    "{stem}-page-{n}.{ext}",
+                                    stem = stem,
+                                    n = i + 1,
+                                    ext = ext
+                                );
                                 let page_path = output_dir.join(&page_name);
                                 std::fs::write(&page_path, page)?;
                             }

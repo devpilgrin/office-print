@@ -1,4 +1,4 @@
-﻿use std::io::Cursor;
+use std::io::Cursor;
 
 use super::*;
 
@@ -31,7 +31,10 @@ fn test_streaming_xlsx_produces_valid_pdf() {
         result.as_pdf_bytes().unwrap().starts_with(b"%PDF"),
         "output should be valid PDF"
     );
-    assert!(result.as_pdf_bytes().unwrap().len() > 100, "PDF should have content");
+    assert!(
+        result.as_pdf_bytes().unwrap().len() > 100,
+        "PDF should have content"
+    );
 }
 
 #[test]
@@ -49,7 +52,12 @@ fn test_streaming_xlsx_same_data_as_normal() {
     let streaming_result = convert_bytes(&data, config::Format::Xlsx, &streaming_opts).unwrap();
 
     assert!(normal_result.as_pdf_bytes().unwrap().starts_with(b"%PDF"));
-    assert!(streaming_result.as_pdf_bytes().unwrap().starts_with(b"%PDF"));
+    assert!(
+        streaming_result
+            .as_pdf_bytes()
+            .unwrap()
+            .starts_with(b"%PDF")
+    );
     assert!(normal_result.as_pdf_bytes().unwrap().len() > 100);
     assert!(streaming_result.as_pdf_bytes().unwrap().len() > 100);
 }
