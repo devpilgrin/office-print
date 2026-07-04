@@ -1,0 +1,14 @@
+[workspace]
+members = ["crates/office-print", "crates/office-print-cli"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.89"
+license = "Apache-2.0"
+repository = "https://github.com/devpilgrin/office-print"
+authors = ["devpilgrin <devpilgrin@github.com>"]
+
+[patch.crates-io]
+umya-spreadsheet = { git = "https://github.com/developer0hye/umya-spreadsheet.git", branch = "fix/panic-safety-v2" }
+docx-rs = { git = "https://github.com/developer0hye/docx-rs.git", branch = "fix/parse-tolerance" }

@@ -1,0 +1,22 @@
+/target
+Cargo.lock
+*.pdf
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Claude (machine-specific, not shared)
+.claude/
+CLAUDE.md
+
+# Classified fixtures (confidential, never upload)
+tests/classified_fixtures/
+
+# Docs (local-only analysis/notes, never push to remote)
+docs/
+
+# Ralph (local-only automation, never push to remote)
+scripts/ralph/

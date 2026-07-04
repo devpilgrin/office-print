@@ -1,0 +1,130 @@
+﻿name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish, for example v0.6.0"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+
+jobs:
+  publish:
+    name: Publish crates.io packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Validate release version
+        run: |
+          set -euo pipefail
+
+          version="${RELEASE_TAG#v}"
+          metadata="$(cargo metadata --no-deps --format-version 1)"
+          lib_version="$(jq -r '.packages[] | select(.name == "office-print") | .version' <<<"${metadata}")"
+          cli_version="$(jq -r '.packages[] | select(.name == "office-print-cli") | .version' <<<"${metadata}")"
+          cli_dependency="$(jq -r '.packages[] | select(.name == "office-print-cli") | .dependencies[] | select(.name == "office-print") | .req' <<<"${metadata}")"
+
+          if [[ "${lib_version}" != "${version}" ]]; then
+            echo "::error::office-print version ${lib_version} does not match ${RELEASE_TAG}"
+            exit 1
+          fi
+
+          if [[ "${cli_version}" != "${version}" ]]; then
+            echo "::error::office-print-cli version ${cli_version} does not match ${RELEASE_TAG}"
+            exit 1
+          fi
+
+          case "${cli_dependency}" in
+            "${version}"|"^${version}") ;;
+            *)
+              echo "::error::office-print-cli depends on office-print ${cli_dependency}, expected ${version}"
+              exit 1
+              ;;
+          esac
+
+      - name: Check crates.io token
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${CARGO_REGISTRY_TOKEN}" ]]; then
+            echo "::error::CARGO_REGISTRY_TOKEN secret is required to publish crates"
+            exit 1
+          fi
+
+      - name: Publish office-print
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          version="${RELEASE_TAG#v}"
+          set +e
+          output="$(cargo publish -p office-print 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "${output}"
+
+          if [[ "${status}" -eq 0 ]]; then
+            exit 0
+          fi
+
+          if grep -F "already exists on crates.io index" <<<"${output}" > /dev/null; then
+            echo "office-print ${version} is already published"
+            exit 0
+          fi
+
+          exit "${status}"
+
+      - name: Publish office-print-cli
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          version="${RELEASE_TAG#v}"
+          for attempt in {1..30}; do
+            set +e
+            output="$(cargo publish -p office-print-cli 2>&1)"
+            status=$?
+            set -e
+            printf '%s\n' "${output}"
+
+            if [[ "${status}" -eq 0 ]]; then
+              exit 0
+            fi
+
+            if grep -F "already exists on crates.io index" <<<"${output}" > /dev/null; then
+              echo "office-print-cli ${version} is already published"
+              exit 0
+            fi
+
+            if grep -E "failed to select a version for the requirement .office-print|no matching package named .office-print" <<<"${output}" > /dev/null; then
+              echo "office-print ${version} is not visible to cargo publish yet; retry ${attempt}/30"
+              sleep 20
+              continue
+            fi
+
+            exit "${status}"
+          done
+
+          echo "::error::office-print-cli ${version} could not be published after waiting for office-print ${version}"
+          exit 1

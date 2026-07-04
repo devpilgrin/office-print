@@ -1,0 +1,30 @@
+[package]
+name = "office-print-cli"
+version = "0.6.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "CLI tool to convert DOCX, XLSX, and PPTX files to PDF/PNG/JPEG"
+authors.workspace = true
+readme = "../../README.md"
+keywords = ["pdf", "png", "jpeg", "docx", "xlsx", "pptx", "cli"]
+categories = ["command-line-utilities"]
+
+[[bin]]
+name = "office-print"
+path = "src/main.rs"
+
+[features]
+server = ["tiny_http"]
+
+[dependencies]
+office-print = { version = "0.6.0", path = "../office-print", features = ["pdf-ops"] }
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+rayon = "1"
+tiny_http = { version = "0.12", optional = true }
+
+[dev-dependencies]
+docx-rs = "0.4"
+lopdf = "0.39"
