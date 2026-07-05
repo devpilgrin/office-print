@@ -4,11 +4,6 @@
   <img src="178320422156c3.png" alt="office-print logo" width="672">
 </p>
 
-[![CI](https://github.com/devpilgrin/office-print/actions/workflows/ci.yml/badge.svg)](https://github.com/devpilgrin/office-print/actions/workflows/ci.yml)
-[![crates.io](https://img.shields.io/crates/v/office-print.svg)](https://crates.io/crates/office-print)
-[![docs.rs](https://docs.rs/office-print/badge.svg)](https://docs.rs/office-print)
-[![License](https://img.shields.io/crates/l/office-print.svg)](LICENSE)
-
 **office-print** — pure-Rust library and CLI for converting Office documents (DOCX, PPTX, XLSX) to **PDF, PNG, or JPEG**.
 
 No LibreOffice. No Chromium. No Docker. No cloud APIs. Just a single binary powered by [Typst](https://github.com/typst/typst).
