@@ -386,98 +386,7 @@ xlsx_fixture_tests!(
     "SH108-SimpleFormattedCell.xlsx"
 );
 
-// --- Upstream parse failures (umya-spreadsheet) ------------------------------
-// Related: #97
-// These files fail with parse errors in umya-spreadsheet. All are handled
-// gracefully — no panics, no crashes. Documented as known upstream limitations.
-
-// ZipError: specified file not found in archive
-xlsx_fixture_tests!(tdf121887, "libreoffice/tdf121887.xlsx");
-xlsx_fixture_tests!(tdf131575, "libreoffice/tdf131575.xlsx");
-xlsx_fixture_tests!(tdf76115, "libreoffice/tdf76115.xlsx");
-xlsx_fixture_tests!(poi_49609, "poi/49609.xlsx");
-xlsx_fixture_tests!(poi_56278, "poi/56278.xlsx");
-xlsx_fixture_tests!(poi_59021, "poi/59021.xlsx");
-
-// IoError: Invalid checksum
-xlsx_fixture_tests!(forcepoint107, "libreoffice/forcepoint107.xlsx");
-
-// ZipError: invalid Zip archive (Could not find EOCD)
-xlsx_fixture_tests!(deep_data, "poi/deep-data.xlsx");
-
-// --- Upstream panics caught by catch_unwind (umya-spreadsheet) ----------------
-// Related: #97
-// These files trigger panics inside umya-spreadsheet (arithmetic overflow,
-// unwrap on None). catch_unwind prevents process crashes. Documented as
-// known upstream limitations.
-
-// attempt to subtract with overflow
-xlsx_fixture_tests!(
-    functions_excel_2010,
-    "libreoffice/functions-excel-2010.xlsx"
-);
-xlsx_fixture_tests!(poi_51710, "poi/51710.xlsx");
-
-// called Option::unwrap() on a None value
-xlsx_fixture_tests!(poi_64450, "poi/64450.xlsx");
-
-// attempt to multiply with overflow
-xlsx_fixture_tests!(
-    formula_eval_test_data_copy,
-    "poi/FormulaEvalTestData_Copy.xlsx"
-);
-
-// --- Upstream panic safety (patched umya-spreadsheet) ------------------------
-// Related: #83
-
-/// Files that previously panicked in umya-spreadsheet now convert successfully
-/// after the fork fix (developer0hye/umya-spreadsheet fix/panic-safety-v2).
-///
-/// All 21 previously-panicking files now produce valid PDFs.
-#[test]
-fn previously_panicking_files_now_convert() {
-    let cases: &[&str] = &[
-        // --- Phase 1 fixes (PR #90) ---
-        // FileNotFound panics (7 files)
-        "libreoffice/chart_hyperlink.xlsx",
-        "libreoffice/hyperlink.xlsx",
-        "libreoffice/tdf130959.xlsx",
-        "libreoffice/test_115192.xlsx",
-        "poi/47504.xlsx",
-        "poi/bug63189.xlsx",
-        "poi/ConditionalFormattingSamples.xlsx",
-        // ParseFloatError / boolean cell (1 file)
-        "libreoffice/check-boolean.xlsx",
-        // unwrap() on None (2 files)
-        "libreoffice/tdf100709.xlsx",
-        "poi/sample-beta.xlsx",
-        // dataBar end element (2 files)
-        "libreoffice/tdf162948.xlsx",
-        "poi/NewStyleConditionalFormattings.xlsx",
-        // --- Phase 2 fixes ---
-        // Backslash zip paths from Windows tools (3 files)
-        "libreoffice/tdf131575.xlsx",
-        "libreoffice/tdf76115.xlsx",
-        "poi/49609.xlsx",
-        // Missing optional styles.xml (3 files)
-        "poi/56278.xlsx",
-        "libreoffice/tdf121887.xlsx",
-        "poi/59021.xlsx",
-        // Arithmetic overflow in formula parsing (2 files)
-        "libreoffice/functions-excel-2010.xlsx",
-        "poi/FormulaEvalTestData_Copy.xlsx",
-        // Missing XML attributes (1 file)
-        "poi/64450.xlsx",
-    ];
-    for name in cases {
-        let path = fixture_path(name);
-        if !path.exists() {
-            eprintln!("Skipping {name}: fixture not available");
-            continue;
-        }
-        assert_produces_valid_pdf(name);
-    }
-}
+// libreoffice/poi fixture tests removed — files are not publicly available.
 
 // --- MIT: calamine (Rust) --------------------------------------------------
 
@@ -491,28 +400,4 @@ xlsx_fixture_tests!(table_multiple, "table-multiple.xlsx");
 xlsx_fixture_tests!(formula_issue, "formula.issue.xlsx");
 xlsx_fixture_tests!(header_row, "header-row.xlsx");
 
-// --- Encrypted / password-protected fixtures --------------------------------
-
-/// Returns `true` if the file is a Git LFS pointer (not the actual content).
-fn is_lfs_pointer(path: &std::path::Path) -> bool {
-    std::fs::read(path)
-        .map(|data| data.starts_with(b"version https://git-lfs"))
-        .unwrap_or(false)
-}
-
-#[test]
-fn encrypted_xlsx_returns_unsupported_encryption() {
-    let path = fixture_path("poi/protected_passtika.xlsx");
-    if is_lfs_pointer(&path) {
-        eprintln!("Skipping protected_passtika.xlsx: Git LFS pointer (not fetched)");
-        return;
-    }
-    let err = office_print::convert(&path).unwrap_err();
-    assert!(
-        matches!(
-            err,
-            office_print::error::ConvertError::UnsupportedEncryption
-        ),
-        "Expected UnsupportedEncryption for protected_passtika.xlsx, got: {err:?}"
-    );
-}
+// Encrypted fixture test removed — file is not publicly available.

@@ -2,7 +2,8 @@
 //!
 //! # Quick start — PDF
 //!
-//! ```
+//! ```no_run
+//! # let input_bytes = std::fs::read("input.docx").unwrap();
 //! let result = office_print::convert_bytes(
 //!     &input_bytes,
 //!     office_print::config::Format::Docx,
@@ -13,7 +14,8 @@
 //!
 //! # PNG output
 //!
-//! ```
+//! ```no_run
+//! # let docx_bytes = std::fs::read("input.docx").unwrap();
 //! use office_print::config::{ConvertOptions, Format, OutputFormat};
 //!
 //! let options = ConvertOptions {
@@ -28,7 +30,8 @@
 //!
 //! # JPEG output
 //!
-//! ```
+//! ```no_run
+//! # let docx_bytes = std::fs::read("input.docx").unwrap();
 //! use office_print::config::{ConvertOptions, Format, OutputFormat};
 //!
 //! let options = ConvertOptions {
